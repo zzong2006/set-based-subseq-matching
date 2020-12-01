@@ -1,6 +1,5 @@
 """
-    각 영화가 개봉한 년도를 나타내는
-
+    영화 id를 key로 하고, 영화 개봉일을 value로 하는 release data B Tree를 구성한다.
 """
 
 import pickle

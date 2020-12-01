@@ -1,6 +1,5 @@
 """
-
-
+    생성된 합성 sequence를 기반으로 영화 개봉연도를 만든다.
 """
 
 import csv, os
@@ -25,11 +24,6 @@ if not file_exist:
 else:
     with open('./sequence_data/not_real_world/old_release_data.pkl', 'rb') as f:
         release_index = pickle.load(f)
-
-# printProgressBar(0, len(list(release_index.keys())), prefix='Progress:', suffix='Complete', length=50)
-# for idx, k in enumerate(release_index.keys()):
-#     release_index[k] = int(sys.maxsize)
-#     printProgressBar(idx+1, len(list(release_index.keys())), prefix='Progress:', suffix='Complete', length=50)
 
 contain_set = set()
 

@@ -24,17 +24,24 @@ np.random.seed(0)
 
 
 def make_discrete_array_based_on_dist(prob_dist, params, size, repeat=True, unique=True):
+    """
+        주어진 확률 분포 prob_dist에 따른 size 만큼의 array를 만듬
+    """
     float_temp = prob_dist.rvs(*params, size=size)
     int_temp = np.array(float_temp, dtype=np.int)
+
     if unique:
         int_temp = np.unique(int_temp)
+
     result_array = int_temp
-    result_array = result_array[np.abs(stats.zscore(result_array)) < 3]
+    result_array = result_array[np.abs(stats.zscore(result_array)) < 3]  # state.zscore (outlier 잡기)
+
     if repeat:
         while size != len(result_array):
             float_temp = prob_dist.rvs(*params, size=(size - len(result_array)))
             int_temp = np.array(float_temp, dtype=np.int)
             result_array = np.concatenate((result_array, int_temp), axis=None)
+
             if unique:
                 result_array = np.unique(result_array)
             result_array = result_array[np.abs(stats.zscore(result_array)) < 3]
@@ -48,7 +55,7 @@ def make_sliced_diff_time(prob_dist, max_val, size, params):
     result_array = int_temp
     result_array = result_array[result_array < max_val]
 
-    while size != len(result_array):
+    while size != len(result_array):  # 원하는 사이즈의 array가 생성될 때 까지 반복
         float_temp = prob_dist.rvs(*params, size=(size - len(result_array)))
         int_temp = np.array(float_temp, dtype=np.int)
         result_array = np.concatenate((result_array, int_temp), axis=None)
@@ -61,11 +68,13 @@ def generate_synthetic_data(num_of_data, control=False):
         data_directory_prefix = './sequence_data/control_synthetic_'
     else:
         data_directory_prefix = './sequence_data/synthetic_'
+
     data_directory_path = data_directory_prefix + str(int(num_of_data))
     directory_file_exist = os.path.isdir(data_directory_path)
     raw_sequences_data_path = data_directory_path + '/sequences.pkl'
     release_index_path = data_directory_path + '/release_data.pkl'
     synthetic_file_exist = os.path.isfile(raw_sequences_data_path)
+
     if not directory_file_exist:
         os.mkdir(data_directory_path)
     if synthetic_file_exist:
@@ -120,17 +129,9 @@ def generate_synthetic_data(num_of_data, control=False):
     release_dates_info_dict = dict()
     for idx, date_val in enumerate(release_dates_info):
         release_dates_info_dict[idx] = date_val
-    # standard_query = np.random.choice(int(domain_size/2), query_length, replace=False)
-    # sorted_standard_query = np.array(sorted(standard_query, key=release_dates_info_dict.__getitem__))
-    # set_standard_query = []
 
     curr_idx = 0
     synthetic_data = dict()
-    # synthetic_data = shelve.open(raw_sequences_data_path)
-    # for ratio, selectivity in zip(similarity_ratios, selectivities):
-    #     theta, eps, _ = sp.compute_theta(ratio, query_length, set_size, win_size)
-    #     thetas.append(theta)
-    #     epsilons.append(eps)
 
     print('Build Released date index ...')
     release_data_index = OLBTree()
@@ -156,13 +157,11 @@ def generate_synthetic_data(num_of_data, control=False):
         else:
             diff_time = make_sliced_diff_time(expon, max_val=(3600 * 24 * 365 * 20),
                                               size=len(temp_darray), params=(expon_loc, expon_scale))
-            # diff_time = np.sort(
-            #     np.array(expon.rvs(loc=expon_loc, scale=expon_scale, size=len(temp_darray)), dtype=int))
-        # diff_time = np.clip(diff_time, a_min=None, a_max=(3600 * 24 * 365 * 10))
+
         review_dates = np.copy(release_dates_info[temp_darray])
         review_dates, sorted_temp_darray = zip(*sorted(zip(review_dates, temp_darray)))
         diff_review_dates = review_dates + diff_time
-        # review_dates += diff_time
+
         temp_list = np.empty(shape=(2, len(sorted_temp_darray)), dtype=np.int)
         temp_list[0] = sorted_temp_darray
         temp_list[1] = diff_review_dates
@@ -175,5 +174,6 @@ def generate_synthetic_data(num_of_data, control=False):
         pickle.dump(synthetic_data, f)
 
 
-generate_synthetic_data(35000)
-# generate_synthetic_data(5000)
+if __name__ == '__main__':
+    generate_synthetic_data(35000)
+    # generate_synthetic_data(5000)

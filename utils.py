@@ -4,16 +4,19 @@ import csv
 
 class Window:
     """
-        윈도우는 집합들을 원소로 구성되어 있다.
+        윈도우는 집합들이 원소로 구성되어 있는 객체를 의미한다.
     """
     def __init__(self, sq_idx, wd_idx, is_sliding=False):
         self.max_timestamp = -math.inf
         self.is_sliding = is_sliding  # Only query sequence use sliding windows
-        self.sets = []
-        self.sequence_idx = sq_idx  # The index of sequences list
-        self.window_idx = wd_idx  # The index of windows list of the sequence
+        self.sets = []              # 집합들
+        self.sequence_idx = sq_idx  # The index of sequences list (몇번째 시퀀스에 속하는지)
+        self.window_idx = wd_idx  # The index of windows list of the sequence (몇번째 윈도우에 속하는지)
 
     def append_set_seq_with_ts(self, set_seq):
+        """
+            집합을 윈도우에 추가하면서 집합 생성 시점이 가장 나중인 timestamp를 설정한다.
+        """
         # 0 : movie Id & 1 : time stamp
         ts = -math.inf
         for pos, set_item in enumerate(set_seq):
@@ -38,8 +41,6 @@ class SetOfWindow:
         self.max_timestamp = -math.inf
         self.sequence_idx = sq_idx
         self.content = frozenset()
-        # self.position = position
-        # self.window_idx = wd_idx
 
     def add_seq_with_ts(self, seq):
         # 0 : movie Id & 1 : time stamp

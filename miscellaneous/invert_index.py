@@ -17,7 +17,6 @@ t = LOBTree()
 invert_index = OOBTree()
 
 t.update({1: "red", 2: "green", 3: "blue", 4: "spades"})
-# print(len(t))
 
 # test_data_path = './sequence_data/test_btree.pkl'
 win_sequences_data_prefix = './sequence_data/win_sequences_'

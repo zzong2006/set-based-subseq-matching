@@ -1,6 +1,5 @@
 """
-
-
+     각 sequence 데이터의 rating에 대한 시간 간격을 조절한다.
 """
 
 import csv, os
@@ -27,6 +26,7 @@ contain_set = set()
 printProgressBar(0, len(sequences.keys()), prefix='Progress:', suffix='Complete', length=50)
 for idx, k in enumerate(sequences.keys()):
     timestamps = []
+
     for movie_id, timestamp in zip(sequences[k][0], sequences[k][1]):
         diff_time = timestamp - release_index[movie_id]
         if diff_time >= 0:
@@ -34,6 +34,7 @@ for idx, k in enumerate(sequences.keys()):
             timestamps.append(release_index[movie_id] + int(diff_time))
         else:
             timestamps.append(release_index[movie_id])
+
     sorted_timestamps, sorted_ids = zip(*(sorted(zip(timestamps, sequences[k][0]))))
     sequences[k][0] = np.array(sorted_ids)
     sequences[k][1] = np.array(sorted_timestamps)
